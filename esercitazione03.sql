@@ -242,5 +242,55 @@
 --     INNER JOIN StrutturaServizio AS STS ON STS.id = CS.id_segreteria
 -- GROUP BY STS.id;
 
--- Esercizio 14 - 
+-- -- Esercizio 14 - 
 
+-- DROP VIEW IF EXISTS oreTotali;
+-- DROP VIEW IF EXISTS sumCrediti;
+
+-- CREATE TEMP VIEW oreTotali AS
+--     SELECT AVG(D.creditilez) AS media
+--     FROM InsErogato AS IE
+--         INNER JOIN Docenza AS D ON D.id_inserogato = IE.id
+--         INNER JOIN Persona AS P ON D.id_persona = P.id
+--     WHERE IE.annoaccademico = '2010/2011'
+--         AND D.creditilez > 3;
+
+-- CREATE TEMP VIEW sumCrediti AS
+--     SELECT SUM(D.creditilez) AS somma, D.id_persona
+--     FROM InsErogato AS IE
+--         INNER JOIN Docenza AS D ON D.id_inserogato = IE.id
+--         INNER JOIN Persona AS P ON D.id_persona = P.id
+--     WHERE IE.annoaccademico = '2010/2011'
+--         AND D.creditilez > 3
+--     GROUP BY D.id_persona;     
+
+-- SELECT DISTINCT SC.somma, P.nome, P.cognome
+-- FROM oreTotali AS OT, InsErogato AS IE
+--     INNER JOIN Docenza AS D ON D.id_inserogato = IE.id    
+--     INNER JOIN sumCrediti AS SC ON SC.id_persona = D.id_persona
+--     INNER JOIN Persona AS P ON P.id = SC.id_persona
+-- WHERE SC.somma > OT.media;
+
+-- -- Esercizio 15 
+
+-- SELECT DISTINCT P.id, P.nome, P.cognome, COUNT(*) AS numero
+-- FROM Persona AS P
+--     INNER JOIN Docenza AS D ON D.id_persona = P.id
+--     INNER JOIN InsErogato AS IE ON IE.id = D.id_inserogato
+-- WHERE IE.annoaccademico = '2005/2006'
+-- GROUP BY P.id, P.nome, P.cognome
+
+-- UNION
+
+-- SELECT DISTINCT P.id, P.nome, P.cognome, 0 AS numero
+-- FROM Persona AS P
+--     INNER JOIN Docenza AS D ON D.id_persona = P.id
+-- WHERE P.id NOT IN (
+--     SELECT DISTINCT P.id
+--     FROM Persona AS P
+--         INNER JOIN Docenza AS D ON D.id_persona = P.id
+--         INNER JOIN InsErogato AS IE ON IE.id = D.id_inserogato
+--     WHERE IE.annoaccademico = '2005/2006'
+-- )
+
+-- ORDER BY id;
