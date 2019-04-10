@@ -63,7 +63,7 @@ FROM PeriodoDid AS PD
     INNER JOIN PeriodoLez AS PL ON PL.id = PD.id
     INNER JOIN InsInPeriodo AS IIP ON PD.id = IIP.id_periodolez    
 WHERE (PD.descrizione LIKE 'I semestre%'
-        OR PD.descrizione LIKE 'Primo semestre')
+        OR PD.descrizione LIKE 'Primo semestre%')
         AND PD.annoaccademico = '2010/2011'
 GROUP BY PL.abbreviazione, PD.discriminante, PD.inizio, PD.fine
 ORDER BY PD.inizio, PD.fine;        
