@@ -65,7 +65,7 @@ FROM PeriodoDid AS PD
 WHERE (PD.descrizione LIKE 'I semestre%'
         OR PD.descrizione LIKE 'Primo semestre')
         AND PD.annoaccademico = '2010/2011'
-GROUP BY PL.abbreviazione, PD.discriminante, PD.iniziO, PD.fine
+GROUP BY PL.abbreviazione, PD.discriminante, PD.inizio, PD.fine
 ORDER BY PD.inizio, PD.fine;        
 
 -- Esericizio 5 - corretto 8 righe
@@ -75,7 +75,7 @@ FROM Facolta AS F
     INNER JOIN InsErogato AS IE ON IE.id_facolta = F.id
 WHERE IE.annoaccademico = '2010/2011'
     AND IE.modulo < 0
-GROUP BY F.id;
+GROUP BY F.id, F.nome;
 
 -- Esercizio 6 - corretto 33 righe
 
@@ -91,7 +91,7 @@ WHERE IE.annoaccademico = '2010/2011'
             INNER JOIN Facolta AS F ON F.id = CIF.id_facolta
         WHERE F.nome = 'Medicina e Chirurgia'
     )
-GROUP BY CS.id
+GROUP BY CS.id, CS.nome
 ORDER BY CS.nome;   
 
 -- Esercizio 7 - corretto 14 righe
@@ -112,8 +112,6 @@ WHERE CS.id = 4
 
 -- Esercizio 8 - corretta 10 righe (anche risultato)
 
-DROP VIEW IF EXISTS TotOreLez;
-
 CREATE TEMP VIEW TotOreLez AS 
     SELECT P.nome, P.cognome, F.id, F.nome AS nomefacolta, SUM(D.orelez) AS orelez
     FROM Facolta AS F 
@@ -121,7 +119,7 @@ CREATE TEMP VIEW TotOreLez AS
         INNER JOIN Docenza AS D ON D.id_inserogato = IE.id
         INNER JOIN Persona AS P ON P.id = D.id_persona
     WHERE IE.annoaccademico = '2009/2010'
-    GROUP BY F.id, P.id;
+    GROUP BY F.id, P.id, P.nome, P.cognome, F.nome;
 
 SELECT TOL.cognome, TOL.nomefacolta, TOL.orelez
 FROM TotOreLez AS TOL
@@ -131,6 +129,8 @@ WHERE TOL.orelez = ANY (
     WHERE TOL.id = TOL2.id
 )
 ORDER BY TOL.cognome;
+
+DROP VIEW IF EXISTS TotOreLez;
 
 -- Esercizio 9 - corretta 22 righe (anche risultato)
 
@@ -240,12 +240,9 @@ ORDER BY I.nomeins
 SELECT COUNT(*), STS.nomestruttura, STS.fax
 FROM CorsoStudi AS CS 
     INNER JOIN StrutturaServizio AS STS ON STS.id = CS.id_segreteria
-GROUP BY STS.id;
+GROUP BY STS.id, STS.nomestruttura, STS.fax;
 
 -- Esercizio 14 - 
-
-DROP VIEW IF EXISTS oreTotali;
-DROP VIEW IF EXISTS sumCrediti;
 
 CREATE TEMP VIEW oreTotali AS
     SELECT AVG(D.creditilez) AS media
@@ -270,6 +267,9 @@ FROM oreTotali AS OT, InsErogato AS IE
     INNER JOIN sumCrediti AS SC ON SC.id_persona = D.id_persona
     INNER JOIN Persona AS P ON P.id = SC.id_persona
 WHERE SC.somma > OT.media;
+
+DROP VIEW IF EXISTS oreTotali;
+DROP VIEW IF EXISTS sumCrediti;
 
 -- Esercizio 15 
 
